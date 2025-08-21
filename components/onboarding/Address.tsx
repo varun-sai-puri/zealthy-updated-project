@@ -1,9 +1,13 @@
 // components/onboarding/Address.tsx
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, FieldErrors } from "react-hook-form";
+import type { FormValues } from "../../lib/type";
 
-export default function Address({ form }: { form: UseFormReturn<any> }) {
-  const { formState } = form;
-  const e = formState.errors as any;
+type Props = {form: UseFormReturn<FormValues>};
+
+export default function Address({ form }: Props) {
+  // keep the e variable
+  const e: FieldErrors<FormValues> = form.formState.errors;
+
 
   return (
     <div className="grid">

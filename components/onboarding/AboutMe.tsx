@@ -1,7 +1,8 @@
 // components/onboarding/AboutMe.tsx
 import { UseFormReturn } from "react-hook-form";
+import type { FormValues } from "../../lib/type";
 
-type Props = { form: UseFormReturn<any> };
+type Props = { form: UseFormReturn<FormValues> };
 
 export default function AboutMe({ form }: Props) {
   return (

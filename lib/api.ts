@@ -1,7 +1,3 @@
-// lib/api.ts
-
-// ---- Types ---------------------------------------------------------------
-
 export type Step = "about" | "birthdate" | "address";
 
 export type PageCfg = {
@@ -74,21 +70,37 @@ function normalizePages(pages: AdminPages["pages"]): PageCfg[] {
 
 async function jsonFetch<T>(input: RequestInfo | URL, init?: RequestInit): Promise<T> {
   const res = await fetch(input, init);
-  if (!res.ok) {
-    let detail: any = null;
-    try { detail = await res.json(); } catch { /* ignore non-JSON bodies */ }
 
-    // Prefer a useful server-provided message; fall back to zod details or generic.
+  if (!res.ok) {
+    // was: let detail: any = null;
+    let detail: unknown = null;
+    try {
+      detail = await res.json();
+    } catch {
+      /* ignore non-JSON bodies */
+    }
+
+    // Prefer a useful server-provided message; fall back to details or generic.
     const msg =
-      detail?.message ??
-      (detail?.errors
-        ? (typeof detail.errors === "string" ? detail.errors : JSON.stringify(detail.errors))
+      // detail.message
+      (typeof detail === "object" && detail !== null && "message" in detail
+        ? (detail as { message?: string }).message
         : undefined) ??
-      detail?.error ??
+      // detail.errors (string or object)
+      (typeof detail === "object" && detail !== null && "errors" in detail
+        ? (typeof (detail as { errors?: unknown }).errors === "string"
+            ? (detail as { errors?: string }).errors
+            : JSON.stringify((detail as { errors?: unknown }).errors))
+        : undefined) ??
+      // detail.error
+      (typeof detail === "object" && detail !== null && "error" in detail
+        ? (detail as { error?: string }).error
+        : undefined) ??
       `HTTP ${res.status}`;
 
     throw new Error(msg);
   }
+
   return res.json() as Promise<T>;
 }
 

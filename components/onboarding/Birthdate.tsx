@@ -1,11 +1,11 @@
 // components/onboarding/Birthdate.tsx
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn , FieldErrors} from "react-hook-form";
+import type { FormValues } from "../../lib/type";
 
-type Props = { form: UseFormReturn<any> };
+type Props = { form: UseFormReturn<FormValues> };
 
 export default function Birthdate({ form }: Props) {
-  const { formState } = form;
-  const e = formState.errors as any;
+  const e : FieldErrors<FormValues> = form.formState.errors;
 
   return (
     <div className="grid">
